@@ -2,6 +2,7 @@ package com.patika.kredinbizdeservice.exceptions;
 
 import com.patika.kredinbizdeservice.exceptions.dto.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,9 +12,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    @Autowired
+    private LogService logService;
+
     @ExceptionHandler(KredinbizdeException.class)
     public ResponseEntity<ExceptionResponse> handleKredinbizdeException(KredinbizdeException exception) {
         log.error("exception occurred. {0}", exception.getCause());
+        logService.sendLog(exception.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -35,5 +40,6 @@ public class GlobalExceptionHandler {
                 .httpStatus(httpStatus)
                 .build();
     }
+
 
 }
